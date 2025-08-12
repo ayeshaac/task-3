@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, IconButton, InputAdornment } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import FilterPanel from "./FilterPanel";
+import FilterPanel from "./filterPanel.jsx";
 
 export default function SearchBar({ onSearch, onApplyFilters, initialFilters }) {
   const [query, setQuery] = useState("");
