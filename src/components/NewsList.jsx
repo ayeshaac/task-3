@@ -1,7 +1,7 @@
 // src/components/NewsList.jsx
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Card, CardContent, CardMedia } from "@mui/material";
-import "./Newslist.css"; // CSS file
+import "./NewsList.css"; // CSS file
 
 export default function NewsList({ searchTerm, filters, preferences }) {
   const [articles, setArticles] = useState([]);
