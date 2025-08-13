@@ -7,7 +7,8 @@ import {
   Button,
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import FilterPanel from "./FilterPanel";
+import FilterPanel from "./filterPanel"; // lowercase 'f'
+
 
 export default function SearchBar({ onSearch, onApplyFilters, initialFilters }) {
   const [searchText, setSearchText] = useState("");
