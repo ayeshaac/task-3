@@ -1,17 +1,18 @@
+// src/components/NewsList.jsx
 import React, { useEffect, useState } from "react";
-import "./NewsList.css";
+import { Box, Typography, Card, CardContent, CardMedia } from "@mui/material";
+import "./Newslist.css"; // CSS file
 
-export default function NewsList({ searchTerm, preferences, filters }) {
+export default function NewsList({ searchTerm, filters, preferences }) {
   const [articles, setArticles] = useState([]);
-  const API_KEY = "6dcaa47a29ba4c45acd1ce8cc8706a41";
+  const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const query = searchTerm?.trim() || "technology";
-        const url = `https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`;
-        const response = await fetch(url);
-        const data = await response.json();
+        let url = `https://newsapi.org/v2/everything?q=${searchTerm || "news"}&apiKey=${API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
         setArticles(data.articles || []);
       } catch (error) {
         console.error("Error fetching news:", error);
@@ -21,75 +22,74 @@ export default function NewsList({ searchTerm, preferences, filters }) {
   }, [searchTerm]);
 
   const filteredArticles = articles.filter((article) => {
-    // --- Category filter ---
-    const selectedCategories = Object.keys(filters?.categories || {}).filter(
-      (key) => filters.categories[key]
+    // Categories
+    const categoryKeys = Object.keys(preferences.categories || {}).filter(
+      (key) => preferences.categories[key]
     );
-    let categoryMatch = true;
-    if (selectedCategories.length > 0) {
-      categoryMatch = selectedCategories.some((cat) =>
-        (article.title + article.description)
-          .toLowerCase()
-          .includes(cat.toLowerCase())
+    const categoryMatch =
+      categoryKeys.length === 0 ||
+      categoryKeys.some(
+        (cat) =>
+          article.title?.toLowerCase().includes(cat.toLowerCase()) ||
+          article.description?.toLowerCase().includes(cat.toLowerCase())
       );
-    }
 
-    // --- Author filter (Preferences) ---
-    const selectedAuthors = Object.keys(preferences?.authors || {}).filter(
+    // Authors
+    const authorKeys = Object.keys(preferences.authors || {}).filter(
       (key) => preferences.authors[key]
     );
-    let authorMatch = true;
-    if (selectedAuthors.length > 0) {
-      authorMatch = article.author && selectedAuthors.includes(article.author);
-    }
+    const authorMatch =
+      authorKeys.length === 0 ||
+      authorKeys.some(
+        (auth) =>
+          article.author?.toLowerCase().includes(auth.toLowerCase())
+      );
 
-    // --- Source filter ---
-    const selectedSources = Object.keys(filters?.sources || {}).filter(
-      (key) => filters.sources[key]
-    );
-    let sourceMatch = true;
-    if (selectedSources.length > 0) {
-      sourceMatch =
-        article.source?.name &&
-        selectedSources.includes(article.source.name);
-    }
-
-    // --- Date filter ---
-    let dateMatch = true;
-    if (filters.fromDate) {
-      dateMatch = new Date(article.publishedAt) >= new Date(filters.fromDate);
-    }
-    if (dateMatch && filters.toDate) {
-      dateMatch = new Date(article.publishedAt) <= new Date(filters.toDate);
-    }
-
-    return categoryMatch && authorMatch && sourceMatch && dateMatch;
+    return categoryMatch && authorMatch;
   });
 
   return (
-    <div className="news-container">
+    <Box className="cards-container">
       {filteredArticles.length > 0 ? (
         filteredArticles.map((article, index) => (
-          <div className="news-card" key={index}>
-            <img
-              src={
-                article.urlToImage ||
-                "https://via.placeholder.com/300x200?text=No+Image"
-              }
-              alt={article.title}
-              className="news-image"
-            />
-            <div className="news-content">
-              <div className="news-title">{article.title}</div>
-              <div className="news-description">
-                {article.description || "No description available."}
-              </div>
-            </div>
-          </div>
+          <Card key={index} className="news-card">
+            {article.urlToImage && (
+              <CardMedia
+                component="img"
+                image={article.urlToImage}
+                alt={article.title}
+                className="news-image"
+              />
+            )}
+            <CardContent>
+              <Typography className="news-title">{article.title}</Typography>
+              <Typography className="news-description">
+                {article.description}
+              </Typography>
+              <Typography className="news-meta">
+                {article.author || "Unknown"} — {article.source?.name}
+              </Typography>
+              <Typography className="news-meta">
+                {new Date(article.publishedAt).toLocaleDateString()}
+              </Typography>
+              {article.url && (
+                <a
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="news-link"
+                >
+                  Read More
+                </a>
+              )}
+            </CardContent>
+          </Card>
         ))
       ) : (
-        <div className="no-news">No news found.</div>
+        <Typography variant="h6" sx={{ m: 2 }}>
+          No results found.
+        </Typography>
       )}
-    </div>
+    </Box>
   );
 }

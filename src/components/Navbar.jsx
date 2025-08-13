@@ -7,14 +7,15 @@ export default function Navbar({ preferences, onSavePreferences }) {
   const [open, setOpen] = useState(false);
 
   const handleSave = (newPrefs) => {
-    onSavePreferences(newPrefs);
+    onSavePreferences(newPrefs); // Send updated preferences to App.js
     setOpen(false);
   };
 
-  const selectedCategories = Object.keys(preferences.categories).filter(
+  // Selected filters
+  const selectedCategories = Object.keys(preferences.categories || {}).filter(
     (key) => preferences.categories[key]
   );
-  const selectedAuthors = Object.keys(preferences.authors).filter(
+  const selectedAuthors = Object.keys(preferences.authors || {}).filter(
     (key) => preferences.authors[key]
   );
 
@@ -27,21 +28,34 @@ export default function Navbar({ preferences, onSavePreferences }) {
             News Aggregator
           </Typography>
 
+          {/* Display active filters */}
           <Box sx={{ display: "flex", gap: 1, mr: 2, flexWrap: "wrap" }}>
-            {selectedCategories.map((cat) => (
-              <Chip key={cat} label={cat} size="small" color="secondary" />
-            ))}
-            {selectedAuthors.map((auth) => (
-              <Chip key={auth} label={auth} size="small" color="primary" />
-            ))}
+            {selectedCategories.length > 0 || selectedAuthors.length > 0 ? (
+              <>
+                {selectedCategories.map((cat) => (
+                  <Chip key={cat} label={cat} size="small" color="secondary" />
+                ))}
+                {selectedAuthors.map((auth) => (
+                  <Chip key={auth} label={auth} size="small" color="primary" />
+                ))}
+              </>
+            ) : (
+              <Chip label="All News" size="small" variant="outlined" />
+            )}
           </Box>
 
-          <Button color="inherit" onClick={() => setOpen(true)}>
+          {/* Preferences Button */}
+          <Button
+            color="inherit"
+            onClick={() => setOpen(true)}
+            sx={{ textTransform: "none" }}
+          >
             Preferences
           </Button>
         </Toolbar>
       </AppBar>
 
+      {/* Preferences Dialog */}
       <PreferencesDialog
         open={open}
         onClose={() => setOpen(false)}

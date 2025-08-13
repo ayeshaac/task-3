@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// src/components/FilterPanel.jsx
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -22,6 +23,13 @@ export default function FilterPanel({ open, onClose, onApply, initialFilters }) 
   const [fromDate, setFromDate] = useState(initialFilters.fromDate || "");
   const [toDate, setToDate] = useState(initialFilters.toDate || "");
 
+  useEffect(() => {
+    setCategories(initialFilters.categories || {});
+    setSources(initialFilters.sources || {});
+    setFromDate(initialFilters.fromDate || "");
+    setToDate(initialFilters.toDate || "");
+  }, [initialFilters]);
+
   const handleCategoryChange = (e) => {
     setCategories({ ...categories, [e.target.name]: e.target.checked });
   };
@@ -31,7 +39,16 @@ export default function FilterPanel({ open, onClose, onApply, initialFilters }) 
   };
 
   const handleApply = () => {
-    onApply({ categories, sources, fromDate, toDate });
+    // Only pass selected categories and sources
+    const selectedCategories = Object.keys(categories).filter((key) => categories[key]);
+    const selectedSources = Object.keys(sources).filter((key) => sources[key]);
+
+    onApply({
+      categories: selectedCategories,
+      sources: selectedSources,
+      fromDate,
+      toDate,
+    });
     onClose();
   };
 
@@ -129,4 +146,3 @@ export default function FilterPanel({ open, onClose, onApply, initialFilters }) 
     </Dialog>
   );
 }
- 

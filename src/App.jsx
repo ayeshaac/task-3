@@ -4,46 +4,37 @@ import SearchBar from "./components/SearchBar";
 import NewsList from "./components/NewsList";
 
 export default function App() {
-  const [searchTerm, setSearchTerm] = useState("");
   const [preferences, setPreferences] = useState({
     categories: {},
-    authors: {},
+    authors: {}
   });
 
   const [filters, setFilters] = useState({
-    categories: {},
-    sources: {},
-    fromDate: "",
-    toDate: ""
+    dateFrom: "",
+    dateTo: "",
+    source: ""
   });
 
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-  };
-
-  const handleApplyFilters = (newFilters) => {
-    setFilters(newFilters);
-    console.log("Applied Filters:", newFilters);
-  };
-
-  const handleSavePreferences = (newPrefs) => {
-    setPreferences(newPrefs);
-    console.log("Saved Preferences:", newPrefs);
-  };
+  const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <div>
-      <Navbar preferences={preferences} onSavePreferences={handleSavePreferences} />
+    <>
+      <Navbar
+        preferences={preferences}
+        onSavePreferences={setPreferences}
+      />
+
       <SearchBar
-        onSearch={handleSearch}
-        onApplyFilters={handleApplyFilters}
+        onSearch={setSearchTerm}
+        onApplyFilters={setFilters}
         initialFilters={filters}
       />
+
       <NewsList
-        searchTerm={searchTerm}
         preferences={preferences}
         filters={filters}
+        searchTerm={searchTerm}
       />
-    </div>
+    </>
   );
 }

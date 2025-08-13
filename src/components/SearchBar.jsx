@@ -1,73 +1,59 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, IconButton, InputAdornment } from "@mui/material";
+import {
+  Box,
+  TextField,
+  IconButton,
+  InputAdornment,
+  Button,
+} from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import FilterPanel from "./filterPanel.jsx";
+import FilterPanel from "./FilterPanel";
 
 export default function SearchBar({ onSearch, onApplyFilters, initialFilters }) {
-  const [query, setQuery] = useState("");
-  const [filterOpen, setFilterOpen] = useState(false); // Dialog open state
+  const [searchText, setSearchText] = useState("");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filters, setFilters] = useState(initialFilters || {});
 
   const handleSearch = () => {
-    if (query.trim() !== "") {
-      onSearch(query);
-    }
+    onSearch(searchText);
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") handleSearch();
-  };
-
-  const handleFilterClick = () => {
-    setFilterOpen(true); // open dialog
-  };
-
-  const handleCloseFilterPanel = () => {
-    setFilterOpen(false); // close dialog
-  };
-
-  const handleApplyFilters = (filters) => {
-    onApplyFilters(filters); // pass filters to App.js
-    handleCloseFilterPanel();
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+    onApplyFilters(newFilters);
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 2,
-        mt: 3,
-        mb: 3
-      }}
-    >
+    <Box sx={{ display: "flex", alignItems: "center", gap: 2, p: 2 }}>
       <TextField
+        label="Search News"
         variant="outlined"
-        placeholder="Search news..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleKeyDown}
-        sx={{ width: "50%" }}
+        size="small"
+        fullWidth
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={handleFilterClick}>
+              <IconButton onClick={() => setFilterOpen(true)}>
                 <FilterListIcon />
               </IconButton>
             </InputAdornment>
-          )
+          ),
         }}
       />
+
       <Button variant="contained" onClick={handleSearch}>
         Search
       </Button>
 
-      {/* Filter Dialog */}
+      {/* Filter Panel Dialog */}
       <FilterPanel
         open={filterOpen}
-        onClose={handleCloseFilterPanel}
+        onClose={() => setFilterOpen(false)}
         onApply={handleApplyFilters}
-        initialFilters={initialFilters}
+        initialFilters={filters}
       />
     </Box>
   );

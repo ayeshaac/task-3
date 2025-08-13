@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,6 +14,12 @@ import {
 export default function PreferencesDialog({ open, onClose, onSave, initialPreferences }) {
   const [categories, setCategories] = useState(initialPreferences?.categories || {});
   const [authors, setAuthors] = useState(initialPreferences?.authors || {});
+
+  // Sync state with initialPreferences when dialog opens or preferences change
+  useEffect(() => {
+    setCategories(initialPreferences?.categories || {});
+    setAuthors(initialPreferences?.authors || {});
+  }, [initialPreferences, open]);
 
   const handleCategoryChange = (event) => {
     setCategories({ ...categories, [event.target.name]: event.target.checked });
