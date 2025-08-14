@@ -128,7 +128,7 @@ export default function NewsList({ searchTerm, preferences }) {
         ))
       ) : (
         <Typography variant="h6" sx={{ m: 2 }}>
-          No results found.
+          News Fetching
         </Typography>
       )}
     </Box>
