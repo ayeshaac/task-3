@@ -39,13 +39,10 @@ export default function FilterPanel({ open, onClose, onApply, initialFilters }) 
   };
 
   const handleApply = () => {
-    // Only pass selected categories and sources
-    const selectedCategories = Object.keys(categories).filter((key) => categories[key]);
-    const selectedSources = Object.keys(sources).filter((key) => sources[key]);
-
     onApply({
-      categories: selectedCategories,
-      sources: selectedSources,
+      
+      categories,
+      sources,
       fromDate,
       toDate,
     });
@@ -59,16 +56,12 @@ export default function FilterPanel({ open, onClose, onApply, initialFilters }) 
       fullWidth
       maxWidth={false}
       PaperProps={{
-        sx: {
-          width: 650,
-          maxWidth: "90%",
-          p: 3,
-        },
+        sx: { width: 650, maxWidth: "90%", p: 3 },
       }}
     >
       <DialogTitle>Filter News</DialogTitle>
       <DialogContent>
-        {/* Categories Accordion */}
+        {/* Categories */}
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>Categories</Typography>
@@ -92,14 +85,14 @@ export default function FilterPanel({ open, onClose, onApply, initialFilters }) 
           </AccordionDetails>
         </Accordion>
 
-        {/* Sources Accordion */}
+        {/* Sources */}
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>Sources</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1 }}>
-              {["News API", "BBC", "AlJazeera"].map((source) => (
+              {["NewsAPI", "The Guardian", "NYTimes"].map((source) => (
                 <FormControlLabel
                   key={source}
                   control={
